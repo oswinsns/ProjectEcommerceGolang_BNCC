@@ -34,7 +34,8 @@ func SetupRoutes(r *gin.Engine) {
 
 		// Product CRUD
 		// admin.GET("/products", handlers.GetProducts)
-		admin.POST("/products", handlers.CreateProduct)
+		admin.POST("/add-products", handlers.CreateProducts)
+		admin.GET("/products/create", handlers.CreateProduct)
 		admin.PUT("/products/:id", handlers.UpdateProduct)
 		admin.DELETE("/products/:id", handlers.DeleteProduct)
 	}

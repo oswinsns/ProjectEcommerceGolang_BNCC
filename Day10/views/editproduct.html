@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Edit Products</h2>
+
+<form method="POST" action="/admin/users/update/{{ .product.ID }}">
+    <div>
+        <label> Product name </label>
+        <input type="text" name="name" value="{{ .product.Name }}" required>
+    </div>
+
+    <div>
+        <label> Price tag </label>
+        <input type="text" name="price" value="{{ .product.Price }}" required>
+    </div>
+
+    <div>
+        <label> Price tag </label>
+        <input type="text" name="stock" value="{{ .product.Stock }}" required>
+    </div>
+
+    <!-- add more fields as needed -->
+    
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="/admin/users" class="btn btn-secondary">Cancel</a>
+</form>
+
+</body>
+</html>

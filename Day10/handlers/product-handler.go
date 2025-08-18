@@ -4,6 +4,7 @@ import (
 	"Day10/configs"
 	"Day10/models"
 	"net/http"
+	"strconv"
 
 	"fmt"
 	"time"
@@ -37,43 +38,111 @@ func ListProducts(c *gin.Context) {
 	})
 }
 
-// Create product
 func CreateProduct(c *gin.Context) {
-	var product models.Product
-	if err := c.ShouldBindJSON(&product); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	c.HTML(http.StatusOK, "createproducts.html", nil)
+}
+
+// Create product
+func CreateProducts(c *gin.Context) {
+	// Parse form input
+	name := c.PostForm("name")
+	stockStr := c.PostForm("stock")
+	priceStr := c.PostForm("price")
+
+	// Convert stock and price from string to int/float
+	stock, err := strconv.Atoi(stockStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid stock value"})
 		return
 	}
-	configs.DB.Create(&product)
-	c.JSON(http.StatusCreated, product)
+
+	price, err := strconv.ParseFloat(priceStr, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid price value"})
+		return
+	}
+
+	// Create product object
+	product := models.Product{
+		Name:  name,
+		Stock: stock,
+		Price: price,
+	}
+
+	// Save to database
+	result := configs.DB.Create(&product)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	// Redirect or return JSON success response
+	c.Redirect(http.StatusSeeOther, "/admin/products")
+}
+
+func UpdateProduct(c *gin.Context) {
+	// Load user first
+	var user models.Product
+	if err := configs.DB.First(&user).Error; err != nil {
+		c.String(http.StatusNotFound, "Product not found")
+		return
+	}
+
+	// Temporary struct to bind form values
+	var form models.Product
+	if err := c.ShouldBind(&form); err != nil {
+		c.String(http.StatusBadRequest, "Error: %v", err)
+		return
+	}
+
+	// Update only the fields from the form
+	user.Name = form.Name
+	user.Stock = form.Stock
+	user.Price = form.Price
+
+	configs.DB.Save(&user)
+	c.Redirect(http.StatusFound, "/admin/products")
+
+}
+
+func DeleteProduct(c *gin.Context) {
+	id := c.Param("id")
+
+	if err := configs.DB.Delete(&models.User{}, id).Error; err != nil {
+		c.String(http.StatusInternalServerError, "Failed to delete user")
+		return
+	}
+
+	// After delete, go back to users list
+	c.Redirect(http.StatusFound, "/admin/products")
 }
 
 // Update product
-func UpdateProduct(c *gin.Context) {
-	id := c.Param("id")
-	var product models.Product
-	if err := configs.DB.First(&product, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
-		return
-	}
+// func UpdateProduct(c *gin.Context) {
+// 	id := c.Param("id")
+// 	var product models.Product
+// 	if err := configs.DB.First(&product, id).Error; err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+// 		return
+// 	}
 
-	if err := c.ShouldBindJSON(&product); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	configs.DB.Save(&product)
-	c.JSON(http.StatusOK, product)
-}
+// 	if err := c.ShouldBindJSON(&product); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+// 	configs.DB.Save(&product)
+// 	c.JSON(http.StatusOK, product)
+// }
 
 // Delete product
-func DeleteProduct(c *gin.Context) {
-	id := c.Param("id")
-	if err := configs.DB.Delete(&models.Product{}, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"message": "Product deleted"})
-}
+// func DeleteProduct(c *gin.Context) {
+// 	id := c.Param("id")
+// 	if err := configs.DB.Delete(&models.Product{}, id).Error; err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, gin.H{"message": "Product deleted"})
+// }
 
 func ExportProducts(c *gin.Context) {
 	var products []models.Product
