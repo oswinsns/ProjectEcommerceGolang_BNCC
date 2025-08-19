@@ -5,4 +5,5 @@ Berikut merupakan hasil mini project pengerjaan backend Golang yang telah dibiki
 
 Link Postman: https://www.postman.com/aerospace-geoscientist-45054066/projek-goecommerce
 
+PS: Ada modifikasi Routing untuk Get product available & latest digabungkan ke endpoint "http://localhost:8080/products" (Bisa lihat di folder router)
 Sekian, Terima Kasih 🙏🙏🙏
