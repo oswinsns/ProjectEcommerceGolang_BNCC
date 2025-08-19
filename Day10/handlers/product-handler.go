@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"fmt"
-	"time"
+	// "fmt"
+	// "time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/xuri/excelize/v2"
+	// "github.com/xuri/excelize/v2"
 )
 
 func GetLatestProducts(c *gin.Context) {
@@ -72,11 +72,11 @@ func EditProductForm(c *gin.Context) {
 	id := c.Param("id")
 	var product models.Product
 	if err := configs.DB.First(&product, id).Error; err != nil {
-		c.String(http.StatusNotFound, "User not found")
+		c.String(http.StatusNotFound, "Product not found")
 		return
 	}
 
-	c.HTML(http.StatusOK, "edituser.html", gin.H{
+	c.HTML(http.StatusOK, "editproduct.html", gin.H{
 		"product": product,
 	})
 }
@@ -120,10 +120,13 @@ func CreateProducts(c *gin.Context) {
 }
 
 func UpdateProduct(c *gin.Context) {
-	// Load user first
-	var user models.Product
-	if err := configs.DB.First(&user).Error; err != nil {
-		c.String(http.StatusNotFound, "Product not found")
+	id := c.Param("id")
+	// Validate ID is a number
+
+	// Load user by ID
+	var product models.Product
+	if err := configs.DB.First(&product, id).Error; err != nil {
+		c.String(http.StatusNotFound, "User not found")
 		return
 	}
 
@@ -135,11 +138,11 @@ func UpdateProduct(c *gin.Context) {
 	}
 
 	// Update only the fields from the form
-	user.Name = form.Name
-	user.Stock = form.Stock
-	user.Price = form.Price
+	product.Name = form.Name
+	product.Stock = form.Stock
+	product.Price = form.Price
 
-	configs.DB.Save(&user)
+	configs.DB.Save(&product)
 	c.Redirect(http.StatusFound, "/admin/products")
 
 }
@@ -183,37 +186,82 @@ func DeleteProduct(c *gin.Context) {
 // 	c.JSON(http.StatusOK, gin.H{"message": "Product deleted"})
 // }
 
-func ExportProducts(c *gin.Context) {
+// func ExportProducts(c *gin.Context) {
+// 	var products []models.Product
+// 	configs.DB.Find(&products)
+
+// 	f := excelize.NewFile()
+// 	sheet := "Products"
+// 	index, _ := f.NewSheet(sheet)
+
+// 	// Header
+// 	headers := []string{"ID", "Name", "Stock", "CreatedAt"}
+// 	for i, h := range headers {
+// 		cell := fmt.Sprintf("%c1", 'A'+i)
+// 		f.SetCellValue(sheet, cell, h)
+// 	}
+
+// 	// Rows
+// 	for i, p := range products {
+// 		row := i + 2
+// 		f.SetCellValue(sheet, fmt.Sprintf("A%d", row), p.ID)
+// 		f.SetCellValue(sheet, fmt.Sprintf("B%d", row), p.Name)
+// 		f.SetCellValue(sheet, fmt.Sprintf("C%d", row), p.Stock)
+// 		f.SetCellValue(sheet, fmt.Sprintf("D%d", row), p.CreatedAt.Format(time.RFC3339))
+// 	}
+
+// 	f.SetActiveSheet(index)
+
+// 	// Write file to response
+// 	filename := "products.xlsx"
+// 	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+// 	c.Header("Content-Disposition", "attachment; filename="+filename)
+// 	c.Header("File-Name", filename)
+// 	c.Header("Content-Transfer-Encoding", "binary")
+// 	_ = f.Write(c.Writer)
+// }
+
+func UpdateUserAPI(c *gin.Context) {
+	id := c.Param("id")
+
+	// Find user
+	var user models.User
+	if err := configs.DB.First(&user, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	// Bind JSON body
+	var input struct {
+		Username string `json:"username"`
+		Email    string `json:"email"`
+		IsActive bool   `json:"is_active"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Update fields
+	user.Username = input.Username
+	user.Email = input.Email
+	user.IsActive = input.IsActive
+
+	configs.DB.Save(&user)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User updated successfully",
+		"user":    user,
+	})
+}
+
+func GetProductsAPI(c *gin.Context) {
 	var products []models.Product
-	configs.DB.Find(&products)
-
-	f := excelize.NewFile()
-	sheet := "Products"
-	index, _ := f.NewSheet(sheet)
-
-	// Header
-	headers := []string{"ID", "Name", "Stock", "CreatedAt"}
-	for i, h := range headers {
-		cell := fmt.Sprintf("%c1", 'A'+i)
-		f.SetCellValue(sheet, cell, h)
+	if err := configs.DB.Find(&products).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching products"})
+		return
 	}
 
-	// Rows
-	for i, p := range products {
-		row := i + 2
-		f.SetCellValue(sheet, fmt.Sprintf("A%d", row), p.ID)
-		f.SetCellValue(sheet, fmt.Sprintf("B%d", row), p.Name)
-		f.SetCellValue(sheet, fmt.Sprintf("C%d", row), p.Stock)
-		f.SetCellValue(sheet, fmt.Sprintf("D%d", row), p.CreatedAt.Format(time.RFC3339))
-	}
-
-	f.SetActiveSheet(index)
-
-	// Write file to response
-	filename := "products.xlsx"
-	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-	c.Header("Content-Disposition", "attachment; filename="+filename)
-	c.Header("File-Name", filename)
-	c.Header("Content-Transfer-Encoding", "binary")
-	_ = f.Write(c.Writer)
+	c.JSON(http.StatusOK, products)
 }

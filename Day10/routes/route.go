@@ -11,10 +11,19 @@ func SetupRoutes(r *gin.Engine) {
 	// Public API
 	r.GET("/products/latest", handlers.GetLatestProducts)
 	r.GET("/products/available", handlers.GetAvailableProducts)
+	r.GET("/products", handlers.ShowProductsPage)
+	r.GET("/products/export", handlers.ExportProducts)
+
 	// r.GET("/", handlers.AdminDashboard)
 	r.POST("/admin/login", handlers.Login)
 	r.GET("/login", handlers.ShowLogin)
 	r.POST("/login", handlers.Login)
+
+	// test Postman API
+	r.PUT("/api/users/:id", handlers.UpdateUserAPI)
+	r.GET("/api/users", handlers.GetUsersAPI)
+	r.GET("/api/products", handlers.GetProductsAPI)
+	r.DELETE("/api/users/delete/:id", handlers.DeleteUserAPI)
 
 	// Admin API (protected)
 	admin := r.Group("/admin", middlewares.AuthMiddleware())
@@ -36,7 +45,7 @@ func SetupRoutes(r *gin.Engine) {
 		admin.GET("/products", handlers.GetProducts)
 		admin.POST("/add-products", handlers.CreateProducts)
 		admin.GET("/products/create", handlers.CreateProduct)
-		admin.GET("/products/edit:id", handlers.EditProductForm)
+		admin.GET("/products/edit/:id", handlers.EditProductForm)
 		admin.POST("/products/update/:id", handlers.UpdateProduct)
 		admin.DELETE("/products/delete/:id", handlers.DeleteProduct)
 	}

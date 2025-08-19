@@ -21,14 +21,25 @@ func SeedUsers() {
 		{Username: "janedoe", Password: hashPassword("mypassword"), Email: "jane@example.com", IsActive: false},
 	}
 
-	var count int64
-	configs.DB.Model(&models.User{}).Count(&count)
-	if count == 0 {
-		if err := configs.DB.Create(&users).Error; err != nil {
-			log.Fatalf("failed seeding users: %v", err)
-		}
-		log.Println("Seeded users successfully 🚀")
-	} else {
-		log.Println("Users already exist, skipping seeding.")
+	// 🔥 Fully clear table first
+	configs.DB.Exec("TRUNCATE TABLE users")
+
+	// Insert fresh seed data
+	if err := configs.DB.Create(&users).Error; err != nil {
+		log.Fatalf("failed seeding users: %v", err)
 	}
+
+	log.Println("Re-seeded users successfully 🚀")
+
+	// var count int64
+	// configs.DB.Model(&models.User{}).Count(&count)
+	// if count == 0 {
+	// 	if err := configs.DB.Create(&users).Error; err != nil {
+	// 		log.Fatalf("failed seeding users: %v", err)
+	// 	}
+	// 	log.Println("Seeded users successfully 🚀")
+	// } else {
+	// 	log.Println("Users already exist, skipping seeding.")
+	// }
+
 }

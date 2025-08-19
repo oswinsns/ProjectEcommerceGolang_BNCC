@@ -77,9 +77,13 @@ func EditUserForm(c *gin.Context) {
 }
 
 func UpdateUser(c *gin.Context) {
-	// Load user first
+
+	id := c.Param("id")
+	// Validate ID is a number
+
+	// Load user by ID
 	var user models.User
-	if err := configs.DB.First(&user).Error; err != nil {
+	if err := configs.DB.First(&user, id).Error; err != nil {
 		c.String(http.StatusNotFound, "User not found")
 		return
 	}
@@ -94,6 +98,7 @@ func UpdateUser(c *gin.Context) {
 	// Update only the fields from the form
 	user.Username = form.Username
 	user.Email = form.Email
+	user.IsActive = form.IsActive // ✅ add this
 
 	configs.DB.Save(&user)
 	c.Redirect(http.StatusFound, "/admin/users")
@@ -141,4 +146,38 @@ func DeleteUser(c *gin.Context) {
 
 func CreateUsers(c *gin.Context) {
 	c.HTML(http.StatusOK, "create.html", nil)
+}
+
+func GetUsersAPI(c *gin.Context) {
+	var users []models.User
+	if err := configs.DB.Find(&users).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"users": users,
+	})
+}
+
+func DeleteUserAPI(c *gin.Context) {
+	id := c.Param("id")
+
+	// Try to find the user
+	var user models.User
+	if err := configs.DB.First(&user, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	// Delete user
+	if err := configs.DB.Delete(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User deleted successfully",
+		"user_id": id,
+	})
 }

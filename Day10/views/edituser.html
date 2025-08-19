@@ -14,6 +14,22 @@
         <input type="text" name="username" value="{{ .user.Username }}">
     </div>
 
+
+     <div>
+        <label>Email</label>
+        <input type="text" name="email" value="{{ .user.Email }}">
+    </div>
+
+    <div>
+    <label>Active</label>
+    <select name="is_active">
+        <option value="true" {{ if .user.IsActive }}selected{{ end }}>Yes</option>
+        <option value="false" {{ if not .user.IsActive }}selected{{ end }}>No</option>
+    </select>
+</div>
+
+
+
     <!-- add more fields as needed -->
     
     <button type="submit" class="btn btn-success">Save</button>
