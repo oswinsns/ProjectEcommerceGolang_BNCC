@@ -11,7 +11,7 @@ func SetupRoutes(r *gin.Engine) {
 	// Public API
 	r.GET("/products/latest", handlers.GetLatestProducts)
 	r.GET("/products/available", handlers.GetAvailableProducts)
-	r.GET("/", handlers.AdminDashboard)
+	// r.GET("/", handlers.AdminDashboard)
 	r.POST("/admin/login", handlers.Login)
 	r.GET("/login", handlers.ShowLogin)
 	r.POST("/login", handlers.Login)
@@ -33,10 +33,11 @@ func SetupRoutes(r *gin.Engine) {
 		admin.POST("/users/delete/:id", handlers.DeleteUser)
 
 		// Product CRUD
-		// admin.GET("/products", handlers.GetProducts)
+		admin.GET("/products", handlers.GetProducts)
 		admin.POST("/add-products", handlers.CreateProducts)
 		admin.GET("/products/create", handlers.CreateProduct)
-		admin.PUT("/products/:id", handlers.UpdateProduct)
-		admin.DELETE("/products/:id", handlers.DeleteProduct)
+		admin.GET("/products/edit:id", handlers.EditProductForm)
+		admin.POST("/products/update/:id", handlers.UpdateProduct)
+		admin.DELETE("/products/delete/:id", handlers.DeleteProduct)
 	}
 }

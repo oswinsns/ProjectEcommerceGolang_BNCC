@@ -25,6 +25,10 @@ func GetAvailableProducts(c *gin.Context) {
 	c.JSON(http.StatusOK, products)
 }
 
+func CreateProduct(c *gin.Context) {
+	c.HTML(http.StatusOK, "createproducts.html", nil)
+}
+
 func ListProducts(c *gin.Context) {
 	var products []models.Product
 	if err := configs.DB.Find(&products).Error; err != nil {
@@ -38,8 +42,43 @@ func ListProducts(c *gin.Context) {
 	})
 }
 
-func CreateProduct(c *gin.Context) {
-	c.HTML(http.StatusOK, "createproducts.html", nil)
+func GetProducts(c *gin.Context) {
+	var products []models.Product
+	if err := configs.DB.Find(&products).Error; err != nil {
+		c.String(http.StatusInternalServerError, "Error fetching products")
+		return
+	}
+
+	c.HTML(http.StatusOK, "products.html", gin.H{
+		"title":    "Latest Available Products",
+		"products": products,
+	})
+}
+
+func PublicProducts(c *gin.Context) {
+	var products []models.Product
+	if err := configs.DB.Find(&products).Error; err != nil {
+		c.String(http.StatusInternalServerError, "Error fetching products")
+		return
+	}
+
+	c.HTML(http.StatusOK, "public.html", gin.H{
+		"title":    "Latest Available Products",
+		"products": products,
+	})
+}
+
+func EditProductForm(c *gin.Context) {
+	id := c.Param("id")
+	var product models.Product
+	if err := configs.DB.First(&product, id).Error; err != nil {
+		c.String(http.StatusNotFound, "User not found")
+		return
+	}
+
+	c.HTML(http.StatusOK, "edituser.html", gin.H{
+		"product": product,
+	})
 }
 
 // Create product
