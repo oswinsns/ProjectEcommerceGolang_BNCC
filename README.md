@@ -1,7 +1,3 @@
-Here’s a **README description** you can use for your Golang e-commerce project:
-
----
-
 # 🛍️ Go E-Commerce Project
 
 A simple yet powerful **e-commerce backend** built with **Go (Golang)**, designed to handle product management, authentication, and data operations efficiently.
