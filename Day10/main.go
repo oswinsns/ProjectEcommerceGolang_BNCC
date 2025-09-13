@@ -50,7 +50,11 @@ func main() {
 	// load HTML templates from views folder
 	r.LoadHTMLGlob("views/*")
 
-	r.Static("/static", "./Day10/static")
+	r.Static("/static", "./static")
+
+	// Serve static files (CSS, JS, images)
+	// fs := http.FileServer(http.Dir("./static"))
+	// http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	// route: serve homepage
 

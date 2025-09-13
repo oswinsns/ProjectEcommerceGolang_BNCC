@@ -2,69 +2,418 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ .title }}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GO Products Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .available-title {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            color: #166534;
+        }
+
+        .newest-title {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
+        }
+
+        /* Replaced table styles with card grid layout */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #f1f5f9;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .product-id {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .stock-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .stock-high {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .stock-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .stock-low {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .created-date {
+            font-size: 0.875rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #64748b;
+            font-style: italic;
+            padding: 3rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            /* Made cards responsive for mobile */
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .product-card {
+                padding: 1rem;
+            }
+
+            .card-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .product-image {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
 </head>
-<body class="p-4">
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>GO Products Dashboard</h1>
+            <a href="/products/export" class="export-btn">📊 Export Excel</a>
+        </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>{{ .title }}</h2>
-        <a href="/products/export" class="btn btn-success">📊 Export Excel</a>
+        <!-- Available Products Section -->
+        <div class="section">
+            <h2 class="section-title available-title">Available Products</h2>
+            <!-- Replaced table with card grid layout -->
+            <div class="cards-grid">
+                <!-- Sample product cards -->
+                <div class="product-card">
+                    <div class="card-header">
+                        <img src="/static/istockphoto-1412240771-612x612.jpg" alt="Wireless Headphones" class="product-image">
+                        <div class="card-info">
+                            <div class="product-id">ID: 001</div>
+                            <div class="product-name">Wireless Headphones</div>
+                            <div class="product-price">Rp.299,000</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="stock-badge stock-high">Stock: 25</span>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-header">
+                        <img src="/static/download.jpeg" alt="Smartphone" class="product-image">
+                        <div class="card-info">
+                            <div class="product-id">ID: 002</div>
+                            <div class="product-name">Smartphone Pro</div>
+                            <div class="product-price">Rp.8,999,000</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="stock-badge stock-medium">Stock: 12</span>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-header">
+                        <img src="/static/istockphoto-1399174861-612x612.jpg" alt="Gaming Laptop" class="product-image">
+                        <div class="card-info">
+                            <div class="product-id">ID: 003</div>
+                            <div class="product-name">Gaming Laptop</div>
+                            <div class="product-price">Rp.15,500,000</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="stock-badge stock-low">Stock: 3</span>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-header">
+                        <img src="/static/download (1).jpeg" alt="Wireless Mouse" class="product-image">
+                        <div class="card-info">
+                            <div class="product-id">ID: 004</div>
+                            <div class="product-name">Wireless Mouse</div>
+                            <div class="product-price">Rp.150,000</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="stock-badge stock-high">Stock: 45</span>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-header">
+                        <img src="/static/download (2).jpeg" alt="Mechanical Keyboard" class="product-image">
+                        <div class="card-info">
+                            <div class="product-id">ID: 005</div>
+                            <div class="product-name">VGA Card Ge-Force RTX</div>
+                            <div class="product-price">Rp.750,000</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="stock-badge stock-medium">Stock: 18</span>
+                    </div>
+                </div>
+
+                <!-- Go template syntax (commented for reference) -->
+                <!-- {{ range .available }}
+                <div class="product-card">
+                    <div class="card-header">
+                        <img src="{{ .ImageURL }}" alt="{{ .Name }}" class="product-image">
+                        <div class="card-info">
+                            <div class="product-id">ID: {{ .ID }}</div>
+                            <div class="product-name">{{ .Name }}</div>
+                            <div class="product-price">Rp.{{ printf "%.0f" .Price }}</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="stock-badge {{ if gt .Stock 20 }}stock-high{{ else if gt .Stock 10 }}stock-medium{{ else }}stock-low{{ end }}">Stock: {{ .Stock }}</span>
+                    </div>
+                </div>
+                {{ else }}
+                <div class="no-data">No available products</div>
+                {{ end }} -->
+            </div>
+        </div>
+
+        <!-- Newest Products Section -->
+        <div class="section">
+            <h2 class="section-title newest-title">Newest Products</h2>
+            <!-- Replaced table with card grid layout for newest products -->
+            <div class="cards-grid">
+                <!-- Sample newest product cards -->
+                <div class="product-card">
+                    <div class="card-header">
+                        <img src="/placeholder.svg?height=80&width=80" alt="Smart Watch" class="product-image">
+                        <div class="card-info">
+                            <div class="product-id">ID: 006</div>
+                            <div class="product-name">Smart Watch</div>
+                            <div class="product-price">Rp.2,500,000</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="created-date">2024-01-15 14:30</span>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-header">
+                        <img src="/placeholder.svg?height=80&width=80" alt="Wireless Earbuds" class="product-image">
+                        <div class="card-info">
+                            <div class="product-id">ID: 007</div>
+                            <div class="product-name">Wireless Earbuds</div>
+                            <div class="product-price">Rp.450,000</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="created-date">2024-01-14 09:15</span>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="card-header">
+                        <img src="/placeholder.svg?height=80&width=80" alt="Tablet Pro" class="product-image">
+                        <div class="card-info">
+                            <div class="product-id">ID: 008</div>
+                            <div class="product-name">Tablet Pro</div>
+                            <div class="product-price">Rp.6,200,000</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="created-date">2024-01-13 16:45</span>
+                    </div>
+                </div>
+
+                <!-- Go template syntax (commented for reference) -->
+                <!-- {{ range .newest }}
+                <div class="product-card">
+                    <div class="card-header">
+                        <img src="{{ .ImageURL }}" alt="{{ .Name }}" class="product-image">
+                        <div class="card-info">
+                            <div class="product-id">ID: {{ .ID }}</div>
+                            <div class="product-name">{{ .Name }}</div>
+                            <div class="product-price">Rp.{{ printf "%.0f" .Price }}</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="created-date">{{ .CreatedAt.Format "2006-01-02 15:04" }}</span>
+                    </div>
+                </div>
+                {{ else }}
+                <div class="no-data">No newest products</div>
+                {{ end }} -->
+            </div>
+        </div>
     </div>
-
-    <!-- Available Products -->
-    <h3>✅ Available Products</h3>
-    <table class="table table-bordered mt-2">
-        <thead class="thead-light">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Price (Rp.)</th>
-                <th>Stock</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{ range .available }}
-            <tr>
-                <td>{{ .ID }}</td>
-                <td>{{ .Name }}</td>
-                <td>Rp.{{ printf "%.0f" .Price }}</td>
-                <td>{{ .Stock }}</td>
-            </tr>
-            {{ else }}
-            <tr>
-                <td colspan="4" class="text-center">No available products</td>
-            </tr>
-            {{ end }}
-        </tbody>
-    </table>
-
-    <!-- Newest Products -->
-    <h3 class="mt-5">🆕 Newest Products</h3>
-    <table class="table table-bordered mt-2">
-        <thead class="thead-light">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Price (Rp.)</th>
-                <th>Created At</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{ range .newest }}
-            <tr>
-                <td>{{ .ID }}</td>
-                <td>{{ .Name }}</td>
-                <td>Rp.{{ printf "%.0f" .Price }}</td>
-                <td>{{ .CreatedAt.Format "2006-01-02 15:04" }}</td>
-            </tr>
-            {{ else }}
-            <tr>
-                <td colspan="4" class="text-center">No newest products</td>
-            </tr>
-            {{ end }}
-        </tbody>
-    </table>
-
 </body>
 </html>
