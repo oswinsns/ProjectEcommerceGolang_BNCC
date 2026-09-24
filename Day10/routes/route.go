@@ -14,6 +14,9 @@ func SetupRoutes(r *gin.Engine) {
 	r.GET("/products", handlers.ShowProductsPage)
 	r.GET("/products/export", handlers.ExportProducts)
 
+	// Interactive Storytelling Practice Lab
+	r.GET("/practice", handlers.PracticeLab)
+
 	// r.GET("/", handlers.AdminDashboard)
 	r.POST("/admin/login", handlers.Login)
 	r.GET("/login", handlers.ShowLogin)

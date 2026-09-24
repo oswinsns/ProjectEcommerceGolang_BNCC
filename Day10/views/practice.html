@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ .title }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+    .navbar {
+      background-color: #1e293b !important;
+      border-bottom: 1px solid #334155;
+    }
+    .hero-banner {
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      border: 1px solid #312e81;
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 30px;
+    }
+    .badge-episode {
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .card-mission {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      transition: all 0.25s ease-in-out;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .card-mission:hover {
+      border-color: #6366f1;
+      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.2);
+    }
+    .card-header-custom {
+      background-color: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid #334155;
+      padding: 16px 20px;
+    }
+    .code-preview {
+      background-color: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 14px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.88rem;
+      color: #38bdf8;
+      overflow-x: auto;
+    }
+    .terminal-box {
+      background-color: #030712;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 14px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: #4ade80;
+    }
+    .interactive-playground {
+      background-color: #111827;
+      border: 1px dashed #4f46e5;
+      border-radius: 10px;
+      padding: 18px;
+      margin-top: 15px;
+    }
+    .btn-action {
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      transition: opacity 0.2s;
+    }
+    .btn-action:hover {
+      opacity: 0.9;
+      color: white;
+    }
+    .nav-pills .nav-link {
+      color: #94a3b8;
+      border-radius: 8px;
+      font-weight: 600;
+      padding: 8px 16px;
+      margin-right: 8px;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #4f46e5;
+      color: #ffffff;
+    }
+    .table-dark-custom {
+      background-color: #0f172a;
+      color: #cbd5e1;
+    }
+    .table-dark-custom th {
+      border-color: #334155;
+      color: #94a3b8;
+    }
+    .table-dark-custom td {
+      border-color: #1e293b;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark px-4 py-3">
+    <a class="navbar-brand font-weight-bold d-flex align-items-center" href="/practice">
+      <span class="mr-2">🛍️</span> Go E-Commerce Lab Praktik
+    </a>
+    <div class="ml-auto">
+      <a href="/admin/dashboard" class="btn btn-sm btn-outline-info mr-2">Admin Dashboard</a>
+      <a href="/products" class="btn btn-sm btn-outline-light mr-2">Katalog Publik</a>
+      <a href="/products/export" class="btn btn-sm btn-success">📥 Download Excel</a>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+
+    <!-- Hero Banner -->
+    <div class="hero-banner shadow">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h2 class="font-weight-bold text-white mb-2">🎮 Storytelling Practice Playground</h2>
+          <p class="text-slate-300 mb-3" style="color: #94a3b8;">
+            Selamat datang di laboratorium praktik interaktif! Di sini Anda dapat mengeksplorasi konsep di balik repository Go E-Commerce ini melalui cerita bergambar, simulasi bug nyata, dan kode yang siap dijalankan spontan.
+          </p>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge badge-primary mr-2 p-2">💡 Cara 1: Coba Simulasi di Web Ini</span>
+            <span class="badge badge-secondary p-2">💻 Cara 2: Jalankan <code>go run practice/story_practice.go</code></span>
+          </div>
+        </div>
+        <div class="col-md-4 text-center mt-3 mt-md-0">
+          <div class="card p-3" style="background: rgba(15, 23, 42, 0.7); border: 1px solid #4338ca; border-radius: 12px;">
+            <small class="text-uppercase text-muted font-weight-bold">Mode Praktik Terminal</small>
+            <div class="terminal-box my-2 text-left" style="font-size: 0.8rem;">
+              $ cd Day10<br>
+              $ go run practice/story_practice.go
+            </div>
+            <small style="color: #a5b4fc;">Pilih episode & uncomment untuk belajar langsung!</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Episodes Navigator -->
+    <ul class="nav nav-pills mb-4" id="practiceTabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="tab-ep1" data-toggle="pill" href="#ep1">🔐 Ep 1: Brankas JWT</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="tab-ep2" data-toggle="pill" href="#ep2">🧪 Ep 2: Alkemis Bcrypt</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="tab-ep3" data-toggle="pill" href="#ep3">🕵️ Ep 3: Bug Delete Product</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="tab-ep4" data-toggle="pill" href="#ep4">📊 Ep 4: Excelize Export</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="tab-ep5" data-toggle="pill" href="#ep5">⚡ Ep 5: Amnesia Seeder</a>
+      </li>
+    </ul>
+
+    <!-- Tab Contents -->
+    <div class="tab-content" id="practiceContent">
+
+      <!-- ================= EPISODE 1 ================= -->
+      <div class="tab-pane fade show active" id="ep1" role="tabpanel">
+        <div class="card-mission">
+          <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <div>
+              <span class="badge badge-info badge-episode mr-2">Episode 1</span>
+              <strong class="text-white h5 mb-0">Misteri Brankas Token JWT & Pembobol Kunci</strong>
+            </div>
+            <small class="text-muted">File: <code>Day10/middlewares/jwt.go</code></small>
+          </div>
+          <div class="card-body">
+            <h6 class="text-warning font-weight-bold">📖 Cerita Kasus:</h6>
+            <p style="color: #cbd5e1;">
+              Admin Toko bernama <strong>Budi</strong> berhasil login. Sistem tidak menyimpan sesi di memori server, melainkan memberikan Budi sebuah token JWT. Token ini dibagi menjadi 3 bagian: <code>Header</code> (algoritma), <code>Payload</code> (data user), dan <code>Signature</code> (tanda tangan rahasia). Seorang penyusup mencoba memalsukan token dengan kunci rahasianya sendiri. Bagaimana server mendeteksinya?
+            </p>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="code-preview">
+                  <span class="text-muted">// Kode di middlewares/jwt.go</span><br>
+                  var jwtKey = []byte("rahasia")<br><br>
+                  func AuthMiddleware() gin.HandlerFunc {<br>
+                  &nbsp;&nbsp;token, err := jwt.ParseWithClaims(...)<br>
+                  &nbsp;&nbsp;if err != nil || !token.Valid {<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;c.JSON(401, gin.H{"error": "Invalid token"})<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;c.Abort()<br>
+                  &nbsp;&nbsp;}<br>
+                  }
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="interactive-playground">
+                  <h6 class="text-white font-weight-bold mb-3">🎮 Laboratorium Uji Kunci JWT:</h6>
+                  <div class="form-group mb-2">
+                    <label class="small text-muted mb-1">Kunci Rahasia yang Dicoba Penguji:</label>
+                    <input type="text" id="jwtSecretInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="kunci_palsu_hacker">
+                  </div>
+                  <button class="btn btn-sm btn-action mb-2" onclick="testJWTVerification()">Uji Verifikasi Token</button>
+                  <div id="jwtTestResult" class="terminal-box mt-2" style="min-height: 50px;">
+                    Klik tombol untuk melihat reaksi server terhadap kunci di atas...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= EPISODE 2 ================= -->
+      <div class="tab-pane fade" id="ep2" role="tabpanel">
+        <div class="card-mission">
+          <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <div>
+              <span class="badge badge-warning badge-episode mr-2">Episode 2</span>
+              <strong class="text-white h5 mb-0">Sang Alkemis Password (Plaintext vs Bcrypt)</strong>
+            </div>
+            <small class="text-muted">File: <code>handlers/user-handler.go:51</code> vs <code>seeders/seeder-user.go:12</code></small>
+          </div>
+          <div class="card-body">
+            <h6 class="text-warning font-weight-bold">📖 Cerita Kasus:</h6>
+            <p style="color: #cbd5e1;">
+              Admin membuat user baru lewat Form Web (`/admin/users/create`). Namun setelah dibuat, user tersebut <strong>selalu gagal login</strong>! Ternyata, form web menyimpan password mentah (contoh: <code>kopi123</code>), sedangkan fungsi <code>Login()</code> selalu mencocokkan password menggunakan <code>bcrypt.CompareHashAndPassword</code>. Karena di database bukan hash Bcrypt, login otomatis ditolak!
+            </p>
+
+            <div class="interactive-playground">
+              <h6 class="text-white font-weight-bold mb-3">🎮 Simulasi Konversi Bcrypt:</h6>
+              <div class="row">
+                <div class="col-md-4">
+                  <label class="small text-muted">Input Password Pengguna:</label>
+                  <input type="text" id="pwdInput" class="form-control form-control-sm bg-dark text-white border-secondary" value="rahasia_budi_123">
+                </div>
+                <div class="col-md-8 d-flex align-items-end">
+                  <button class="btn btn-sm btn-danger mr-2" onclick="simulasiPlaintext()">1. Simpan Polos (Bug Saat Ini)</button>
+                  <button class="btn btn-sm btn-success" onclick="simulasiBcrypt()">2. Simpan dengan Bcrypt Hash (Solusi)</button>
+                </div>
+              </div>
+              <div id="bcryptResult" class="terminal-box mt-3" style="min-height: 60px;">
+                Pilih salah satu tombol di atas untuk melihat perbandingan penyimpanan di database!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= EPISODE 3 ================= -->
+      <div class="tab-pane fade" id="ep3" role="tabpanel">
+        <div class="card-mission">
+          <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <div>
+              <span class="badge badge-danger badge-episode mr-2">Episode 3</span>
+              <strong class="text-white h5 mb-0">Detektif & Kasus User Menghilang (The Delete Bug)</strong>
+            </div>
+            <small class="text-muted">File: <code>Day10/handlers/product-handler.go:153</code></small>
+          </div>
+          <div class="card-body">
+            <h6 class="text-danger font-weight-bold">🚨 Misteri Bug Nyata di Repositori:</h6>
+            <p style="color: #cbd5e1;">
+              Perhatikan baris 153 pada file <code>handlers/product-handler.go</code>:
+              <br><code>configs.DB.Delete(&models.User{}, id)</code> di dalam fungsi <strong>DeleteProduct</strong>!
+              Ketika admin ingin menghapus produk ID 2, sistem malah menghapus <strong>Akun User ID 2</strong>!
+            </p>
+
+            <div class="interactive-playground">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="text-white font-weight-bold mb-0">🎮 Simulasi Interaktif Keadaan Database:</h6>
+                <div>
+                  <button class="btn btn-sm btn-danger mr-2" onclick="eksekusiBugDelete()">💥 Jalankan Kode Bug (Hapus Produk ID 2)</button>
+                  <button class="btn btn-sm btn-success mr-2" onclick="eksekusiFixDelete()">🛠️ Jalankan Kode Fix</button>
+                  <button class="btn btn-sm btn-secondary" onclick="resetDatabaseSim()">🔄 Reset Data</button>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card bg-dark border-secondary p-2">
+                    <strong class="text-info mb-2">📦 Tabel Produk</strong>
+                    <table class="table table-sm table-dark-custom mb-0">
+                      <thead>
+                        <tr><th>ID</th><th>Nama</th><th>Status</th></tr>
+                      </thead>
+                      <tbody id="productTableBody">
+                        <tr><td>1</td><td>Laptop Gaming</td><td><span class="badge badge-success">Ada</span></td></tr>
+                        <tr id="prod-row-2"><td>2</td><td>Keyboard Rusak (Target Hapus)</td><td><span class="badge badge-success">Ada</span></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card bg-dark border-secondary p-2">
+                    <strong class="text-warning mb-2">👤 Tabel Pengguna (Users)</strong>
+                    <table class="table table-sm table-dark-custom mb-0">
+                      <thead>
+                        <tr><th>ID</th><th>Username</th><th>Status</th></tr>
+                      </thead>
+                      <tbody id="userTableBody">
+                        <tr><td>1</td><td>admin</td><td><span class="badge badge-success">Aktif</span></td></tr>
+                        <tr id="user-row-2"><td>2</td><td>john_doe</td><td><span class="badge badge-success">Aktif</span></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div id="deleteLog" class="terminal-box mt-3" style="min-height: 40px;">
+                Siap. Klik tombol "Jalankan Kode Bug" untuk melihat apa yang terjadi.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= EPISODE 4 ================= -->
+      <div class="tab-pane fade" id="ep4" role="tabpanel">
+        <div class="card-mission">
+          <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <div>
+              <span class="badge badge-success badge-episode mr-2">Episode 4</span>
+              <strong class="text-white h5 mb-0">Pabrik Laporan Otomatis dengan Excelize</strong>
+            </div>
+            <small class="text-muted">File: <code>handlers/public-handler.go:36-76</code></small>
+          </div>
+          <div class="card-body">
+            <h6 class="text-warning font-weight-bold">📖 Cerita Kasus:</h6>
+            <p style="color: #cbd5e1;">
+              Manajer toko ingin melihat laporan inventaris produk setiap minggu. Daripada menulis manual, sistem Go kita memanfaatkan library <code>excelize/v2</code> untuk membuat file spreadsheet <code>.xlsx</code> secara instan dari database.
+            </p>
+
+            <div class="row align-items-center">
+              <div class="col-md-7">
+                <div class="code-preview">
+                  f := excelize.NewFile()<br>
+                  sheet := "Products"<br>
+                  f.NewSheet(sheet)<br>
+                  f.SetCellValue(sheet, "A1", "ID")<br>
+                  f.SetCellValue(sheet, "B1", "Name")<br>
+                  ...<br>
+                  c.Header("Content-Type", "application/vnd.openxmlformats...")<br>
+                  f.Write(c.Writer) <span class="text-muted">// stream langsung ke browser!</span>
+                </div>
+              </div>
+              <div class="col-md-5 text-center">
+                <div class="card p-3 bg-dark border-secondary">
+                  <p class="text-white mb-2">Uji Langsung Endpoint Ekspor:</p>
+                  <a href="/products/export" class="btn btn-success font-weight-bold py-2 mb-2">
+                    📥 Download <code>products.xlsx</code>
+                  </a>
+                  <small class="text-muted d-block">Dihasilkan langsung oleh handler Gin & Excelize!</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= EPISODE 5 ================= -->
+      <div class="tab-pane fade" id="ep5" role="tabpanel">
+        <div class="card-mission">
+          <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <div>
+              <span class="badge badge-primary badge-episode mr-2">Episode 5</span>
+              <strong class="text-white h5 mb-0">Kutukan Amnesia Database (Seeder Truncate)</strong>
+            </div>
+            <small class="text-muted">File: <code>databases/seeders/seeder-products.go:19</code></small>
+          </div>
+          <div class="card-body">
+            <h6 class="text-warning font-weight-bold">📖 Cerita Kasus:</h6>
+            <p style="color: #cbd5e1;">
+              Pernahkah Anda heran mengapa setiap kali server dimatikan lalu dijalankan lagi, produk-produk baru yang Anda buat mendadak lenyap?
+              Penyebabnya adalah baris <code>configs.DB.Exec("TRUNCATE TABLE products")</code> di dalam seeder.
+              Seeder yang baik seharusnya bersifat <strong>Idempoten</strong>: mengecek apakah tabel sudah memiliki data terlebih dahulu sebelum memasukkan data default!
+            </p>
+
+            <div class="interactive-playground">
+              <h6 class="text-white font-weight-bold mb-2">Perbandingan Logika Seeder:</h6>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card bg-dark border-danger p-3">
+                    <span class="text-danger font-weight-bold mb-2">❌ Cara Lama (Menyebabkan Data Hilang)</span>
+                    <pre class="code-preview text-danger mb-0" style="color: #f87171 !important;">
+configs.DB.Exec("TRUNCATE TABLE products")
+configs.DB.Create(&products)
+<span class="text-muted">// Menghapus semua data admin setiap restart!</span></pre>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card bg-dark border-success p-3">
+                    <span class="text-success font-weight-bold mb-2">✅ Cara Benar (Aman & Idempoten)</span>
+                    <pre class="code-preview text-success mb-0" style="color: #4ade80 !important;">
+var count int64
+configs.DB.Model(&models.Product{}).Count(&count)
+if count == 0 {
+    configs.DB.Create(&products)
+} <span class="text-muted">// Lewati jika sudah ada data!</span></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- End Tab Content -->
+
+    <!-- Footer -->
+    <div class="text-center py-4 text-muted small border-top border-secondary mt-5">
+      Go E-Commerce BNCC Project • Lab Praktik Interaktif • Belajar Santai & Mandiri
+    </div>
+
+  </div> <!-- End Container -->
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // EPISODE 1: Simulasi JWT
+    function testJWTVerification() {
+      const secret = document.getElementById('jwtSecretInput').value.trim();
+      const output = document.getElementById('jwtTestResult');
+      if (secret === 'rahasia') {
+        output.innerHTML = '<span style="color: #4ade80;">✅ [VERIFIKASI SUKSES]: Kunci cocok dengan "rahasia" di middlewares/jwt.go! Token sah dan akses admin diberikan!</span>';
+      } else {
+        output.innerHTML = '<span style="color: #f87171;">⛔ [VERIFIKASI GAGAL]: Kunci "' + secret + '" tidak cocok dengan signature token! Server menolak dengan kode HTTP 401 Unauthorized!</span>';
+      }
+    }
+
+    // EPISODE 2: Simulasi Bcrypt
+    function simulasiPlaintext() {
+      const pwd = document.getElementById('pwdInput').value;
+      const output = document.getElementById('bcryptResult');
+      output.innerHTML = '<span style="color: #f87171;">🚨 Disimpan di DB: "' + pwd + '" (Polos)<br>Saat Login: bcrypt.CompareHashAndPassword menolak karena bukan format hash valid! User GAGAL LOGIN.</span>';
+    }
+
+    function simulasiBcrypt() {
+      const pwd = document.getElementById('pwdInput').value;
+      const output = document.getElementById('bcryptResult');
+      const fakeSalt = '$2a$10$e8' + Math.random().toString(36).substring(2, 12) + 'H8uJkLmNpQrStUvWxYz...';
+      output.innerHTML = '<span style="color: #4ade80;">🔒 Disimpan di DB: "' + fakeSalt + '" (Bcrypt Hash dengan Salt)<br>Saat Login: bcrypt.CompareHashAndPassword memverifikasi password cocok secara aman! User BERHASIL LOGIN.</span>';
+    }
+
+    // EPISODE 3: Simulasi Delete Bug
+    function eksekusiBugDelete() {
+      document.getElementById('user-row-2').innerHTML = '<td>2</td><td><del>john_doe</del></td><td><span class="badge badge-danger">TERHAPUS KARENA BUG!</span></td>';
+      document.getElementById('prod-row-2').innerHTML = '<td>2</td><td>Keyboard Rusak (Target Hapus)</td><td><span class="badge badge-warning">Masih Ada di DB!</span></td>';
+      document.getElementById('deleteLog').innerHTML = '<span style="color: #f87171;">💥 BUG TERJADI: configs.DB.Delete(&models.User{}, id) menghapus User John Doe (ID 2), sedangkan Produk ID 2 masih tertinggal di database!</span>';
+    }
+
+    function eksekusiFixDelete() {
+      document.getElementById('prod-row-2').innerHTML = '<td>2</td><td><del>Keyboard Rusak</del></td><td><span class="badge badge-secondary">Terhapus Sempurna</span></td>';
+      document.getElementById('user-row-2').innerHTML = '<td>2</td><td>john_doe</td><td><span class="badge badge-success">Aktif & Aman</span></td>';
+      document.getElementById('deleteLog').innerHTML = '<span style="color: #4ade80;">✅ FIX BEKERJA: configs.DB.Delete(&models.Product{}, id) menghapus produk yang benar, dan akun User tetap aman!</span>';
+    }
+
+    function resetDatabaseSim() {
+      document.getElementById('prod-row-2').innerHTML = '<td>2</td><td>Keyboard Rusak (Target Hapus)</td><td><span class="badge badge-success">Ada</span></td>';
+      document.getElementById('user-row-2').innerHTML = '<td>2</td><td>john_doe</td><td><span class="badge badge-success">Aktif</span></td>';
+      document.getElementById('deleteLog').innerHTML = 'Database di-reset ke kondisi awal.';
+    }
+  </script>
+</body>
+</html>
