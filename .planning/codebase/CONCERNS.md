@@ -8,13 +8,19 @@
 
 ## 1. Critical Functional Bugs
 
-### 🚨 1. `DeleteProduct` Deletes Users Instead of Products
+### ✅ 1. [FIXED] `DeleteProduct` Deletes Users Instead of Products
 - **Location:** [`handlers/product-handler.go:150-160`](file:///c:/Users/LOQ/Documents/Project_listrik/ProjectEcommerceGolang_BNCC/Day10/handlers/product-handler.go#L150-L160)
-- **Code:**
+- **Status:** **TERATASI (RESOLVED)**
+
+#### 🔍 Kondisi Awal (Sebelum Fix):
+- **Severity:** **CRITICAL**
+- **Impact:** Administrator yang menghapus produk justru menghapus record User yang memiliki ID angka yang sama! Produk tetap berada di database, sedangkan data akun pengguna hilang/soft-deleted.
+- **Kode Asli (Bermasalah):**
   ```go
   func DeleteProduct(c *gin.Context) {
       id := c.Param("id")
 
+      // ❌ BUG: Memanggil Delete pada struct models.User{} bukan models.Product{}
       if err := configs.DB.Delete(&models.User{}, id).Error; err != nil {
           c.String(http.StatusInternalServerError, "Failed to delete user")
           return
@@ -24,8 +30,27 @@
       c.Redirect(http.StatusFound, "/admin/products")
   }
   ```
-- **Severity:** **CRITICAL**.
-- **Impact:** An administrator deleting a product actually deletes the User record sharing that numeric ID! The product remains untouched in the database, while user data is deleted or soft-deleted.
+
+#### 🛠️ Solusi & Perbaikan yang Diterapkan:
+1. Mengubah target delete dari `&models.User{}` menjadi `&models.Product{}`.
+2. Memperbaiki pesan error dari `"Failed to delete user"` menjadi `"Failed to delete product"`.
+3. Memperbaiki `routes/route.go` agar mendukung method `POST` (`admin.POST("/products/delete/:id", ...)`) selain `DELETE`, karena form HTML di browser hanya mengirimkan `POST`.
+4. Memperbaiki label dan konfirmasi tombol di [`views/products.html`](file:///c:/Users/LOQ/Documents/Project_listrik/ProjectEcommerceGolang_BNCC/Day10/views/products.html) dari "delete this user" menjadi "delete this product".
+- **Kode Sesudah Fix:**
+  ```go
+  func DeleteProduct(c *gin.Context) {
+      id := c.Param("id")
+
+      // ✅ FIX: Menggunakan models.Product{}
+      if err := configs.DB.Delete(&models.Product{}, id).Error; err != nil {
+          c.String(http.StatusInternalServerError, "Failed to delete product")
+          return
+      }
+
+      // After delete, go back to products list
+      c.Redirect(http.StatusFound, "/admin/products")
+  }
+  ```
 
 ### 🚨 2. Plaintext Password Saved on User Creation
 - **Location:** [`handlers/user-handler.go:39-64`](file:///c:/Users/LOQ/Documents/Project_listrik/ProjectEcommerceGolang_BNCC/Day10/handlers/user-handler.go#L39-L64)

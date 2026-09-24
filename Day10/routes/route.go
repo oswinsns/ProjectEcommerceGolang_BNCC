@@ -50,6 +50,9 @@ func SetupRoutes(r *gin.Engine) {
 		admin.GET("/products/create", handlers.CreateProduct)
 		admin.GET("/products/edit/:id", handlers.EditProductForm)
 		admin.POST("/products/update/:id", handlers.UpdateProduct)
+		// 💡 Form HTML browser hanya support method POST/GET, sehingga POST dibutuhkan agar tombol delete di web browser bekerja:
+		admin.POST("/products/delete/:id", handlers.DeleteProduct)
+		// Tetap sediakan DELETE untuk request dari API client (Postman/Mobile):
 		admin.DELETE("/products/delete/:id", handlers.DeleteProduct)
 	}
 }

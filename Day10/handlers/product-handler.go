@@ -126,7 +126,8 @@ func UpdateProduct(c *gin.Context) {
 	// Load user by ID
 	var product models.Product
 	if err := configs.DB.First(&product, id).Error; err != nil {
-		c.String(http.StatusNotFound, "User not found")
+		// c.String(http.StatusNotFound, "User not found") // ❌ Sebelumnya: salah pesan "User not found"
+		c.String(http.StatusNotFound, "Product not found")
 		return
 	}
 
@@ -150,12 +151,19 @@ func UpdateProduct(c *gin.Context) {
 func DeleteProduct(c *gin.Context) {
 	id := c.Param("id")
 
-	if err := configs.DB.Delete(&models.User{}, id).Error; err != nil {
-		c.String(http.StatusInternalServerError, "Failed to delete user")
+	// ❌ SEBELUMNYA (BUG): Menghapus User bukan Product karena salah passing struct &models.User{}
+	// if err := configs.DB.Delete(&models.User{}, id).Error; err != nil {
+	// 	c.String(http.StatusInternalServerError, "Failed to delete user")
+	// 	return
+	// }
+
+	// ✅ PERBAIKAN: Menggunakan &models.Product{} agar yang terhapus adalah data produk
+	if err := configs.DB.Delete(&models.Product{}, id).Error; err != nil {
+		c.String(http.StatusInternalServerError, "Failed to delete product")
 		return
 	}
 
-	// After delete, go back to users list
+	// After delete, go back to products list
 	c.Redirect(http.StatusFound, "/admin/products")
 }
 
