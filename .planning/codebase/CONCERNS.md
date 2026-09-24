@@ -52,19 +52,82 @@
   }
   ```
 
-### 🚨 2. Plaintext Password Saved on User Creation
+### ✅ 2. [FIXED] Plaintext Password Saved on User Creation
 - **Location:** [`handlers/user-handler.go:39-64`](file:///c:/Users/LOQ/Documents/Project_listrik/ProjectEcommerceGolang_BNCC/Day10/handlers/user-handler.go#L39-L64)
-- **Code:**
+- **Status:** **TERATASI (RESOLVED)**
+
+#### 🔍 Kondisi Awal (Sebelum Fix):
+- **Severity:** **HIGH**
+- **Impact:** Meskipun `seeder-user.go` meng-hash password menggunakan Bcrypt, fungsi `CreateUser` pada handler form web menyimpan string password mentah langsung ke database. Akibatnya, user yang dibuat via web admin tidak akan pernah bisa login (karena fungsi `Login` di `auth-handler.go` memverifikasi menggunakan `bcrypt.CompareHashAndPassword` yang membutuhkan hash Bcrypt valid) dan password tersimpan tanpa enkripsi.
+- **Kode Asli (Bermasalah):**
   ```go
-  user := models.User{
-      Username: username,
-      Password: password, // ⚠️ should hash before saving!
-      Email:    email,
-      IsActive: isActive,
+  func CreateUser(c *gin.Context) {
+      username := c.PostForm("username")
+      password := c.PostForm("password")
+      email := c.PostForm("email")
+      isActiveStr := c.PostForm("is_active")
+
+      isActive, _ := strconv.ParseBool(isActiveStr)
+
+      // ❌ BUG: Menyimpan password mentah (plaintext) tanpa hash Bcrypt
+      user := models.User{
+          Username: username,
+          Password: password, // ⚠️ should hash before saving!
+          Email:    email,
+          IsActive: isActive,
+      }
+
+      result := configs.DB.Create(&user)
+      // ...
   }
   ```
-- **Severity:** **HIGH**.
-- **Impact:** While `seeder-user.go` hashes passwords with bcrypt, the admin `CreateUser` handler saves the raw password string directly. Any user created via this form will never be able to log in (because `bcrypt.CompareHashAndPassword` in `auth-handler.go` expects a valid bcrypt hash) and passwords are saved unencrypted.
+
+#### 🛠️ Solusi & Perbaikan yang Diterapkan:
+1. Mengimpor library `golang.org/x/crypto/bcrypt` ke dalam `handlers/user-handler.go`.
+2. Menambahkan enkripsi password menggunakan `bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)` sebelum struct `models.User` disimpan ke database.
+3. Memberikan penanganan error jika proses hashing gagal (`HTTP 500`).
+4. Menyimpan kodingan lama dalam bentuk komentar (commented-out) beranotasi di source code untuk keperluan belajar dan ulasan.
+- **Kode Sesudah Fix:**
+  ```go
+  func CreateUser(c *gin.Context) {
+      username := c.PostForm("username")
+      password := c.PostForm("password")
+      email := c.PostForm("email")
+      isActiveStr := c.PostForm("is_active")
+
+      isActive, _ := strconv.ParseBool(isActiveStr)
+
+      // ❌ SEBELUMNYA (BUG): Password disimpan langsung secara polos (plaintext)
+      // user := models.User{
+      // 	Username: username,
+      // 	Password: password,
+      // 	Email:    email,
+      // 	IsActive: isActive,
+      // }
+
+      // ✅ PERBAIKAN: Hash password dengan Bcrypt sebelum disimpan ke database
+      hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+      if err != nil {
+          c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengenkripsi password"})
+          return
+      }
+
+      user := models.User{
+          Username: username,
+          Password: string(hashedPassword),
+          Email:    email,
+          IsActive: isActive,
+      }
+
+      result := configs.DB.Create(&user)
+      if result.Error != nil {
+          c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+          return
+      }
+
+      c.Redirect(http.StatusSeeOther, "/admin/users")
+  }
+  ```
 
 ### 🚨 3. Automatic Database Truncation on Every Server Start
 - **Location:** [`main.go:42-43`](file:///c:/Users/LOQ/Documents/Project_listrik/ProjectEcommerceGolang_BNCC/Day10/main.go#L42-L43), [`databases/seeders/seeder-products.go:19`](file:///c:/Users/LOQ/Documents/Project_listrik/ProjectEcommerceGolang_BNCC/Day10/databases/seeders/seeder-products.go#L19), [`databases/seeders/seeder-user.go:25`](file:///c:/Users/LOQ/Documents/Project_listrik/ProjectEcommerceGolang_BNCC/Day10/databases/seeders/seeder-user.go#L25)

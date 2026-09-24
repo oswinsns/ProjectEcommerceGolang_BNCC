@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // List all users
@@ -45,10 +46,24 @@ func CreateUser(c *gin.Context) {
 	// convert "true"/"false" string to bool
 	isActive, _ := strconv.ParseBool(isActiveStr)
 
-	// create user
+	// ❌ SEBELUMNYA (BUG): Password disimpan langsung secara polos (plaintext) tanpa hash Bcrypt
+	// user := models.User{
+	// 	Username: username,
+	// 	Password: password, // ⚠️ should hash before saving!
+	// 	Email:    email,
+	// 	IsActive: isActive,
+	// }
+
+	// ✅ PERBAIKAN: Hash password dengan Bcrypt sebelum disimpan ke database
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengenkripsi password"})
+		return
+	}
+
 	user := models.User{
 		Username: username,
-		Password: password, // ⚠️ should hash before saving!
+		Password: string(hashedPassword),
 		Email:    email,
 		IsActive: isActive,
 	}
