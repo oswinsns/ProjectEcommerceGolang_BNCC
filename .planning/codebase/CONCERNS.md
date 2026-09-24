@@ -129,15 +129,49 @@
   }
   ```
 
-### 🚨 3. Automatic Database Truncation on Every Server Start
+### ✅ 3. [FIXED] Automatic Database Truncation on Every Server Start
 - **Location:** [`main.go:42-43`](file:///c:/Users/LOQ/Documents/Project_listrik/ProjectEcommerceGolang_BNCC/Day10/main.go#L42-L43), [`databases/seeders/seeder-products.go:19`](file:///c:/Users/LOQ/Documents/Project_listrik/ProjectEcommerceGolang_BNCC/Day10/databases/seeders/seeder-products.go#L19), [`databases/seeders/seeder-user.go:25`](file:///c:/Users/LOQ/Documents/Project_listrik/ProjectEcommerceGolang_BNCC/Day10/databases/seeders/seeder-user.go#L25)
-- **Code:**
+- **Status:** **TERATASI (RESOLVED)**
+
+#### 🔍 Kondisi Awal (Sebelum Fix):
+- **Severity:** **HIGH**
+- **Impact:** Setiap kali server Go dimatikan dan dinyalakan ulang (`go run main.go`), perintah `TRUNCATE TABLE` dieksekusi secara membabi buta. Akibatnya, seluruh produk baru atau pengguna baru yang ditambahkan oleh admin melalui aplikasi web akan langsung hilang terhapus, ter-reset kembali ke 5 produk awal dan 3 user seeder.
+- **Kode Asli (Bermasalah):**
   ```go
+  // seeder-products.go & seeder-user.go
   configs.DB.Exec("TRUNCATE TABLE products")
-  configs.DB.Exec("TRUNCATE TABLE users")
+  if err := configs.DB.Create(&products).Error; err != nil {
+      log.Fatalf("failed seeding products: %v", err)
+  }
   ```
-- **Severity:** **HIGH**.
-- **Impact:** Any new products or users created by administrators are immediately wiped out the next time the Go server restarts. Seeding should check if records exist before inserting rather than executing `TRUNCATE TABLE`.
+
+#### 🛠️ Solusi & Perbaikan yang Diterapkan:
+1. Menghapus eksekusi perintah destruktif `TRUNCATE TABLE`.
+2. Menerapkan pola seeder **Idempoten**: Menghitung terlebih dahulu jumlah data di tabel menggunakan `configs.DB.Model(&models.Entity{}).Count(&count)`.
+3. Hanya melakukan seeding awal jika tabel benar-benar masih kosong (`count == 0`).
+4. Jika tabel sudah memiliki data (`count > 0`), proses seeding dilewati dan menampilkan log informatif `"Products/Users already exist, skipping seeding."`.
+5. Menyimpan kodingan lama dalam bentuk komentar (commented-out) beranotasi di source code untuk keperluan belajar dan ulasan.
+- **Kode Sesudah Fix:**
+  ```go
+  // ❌ SEBELUMNYA (BUG): TRUNCATE menghapus 100% isi tabel setiap kali server restart
+  // configs.DB.Exec("TRUNCATE TABLE products")
+  // if err := configs.DB.Create(&products).Error; err != nil {
+  // 	log.Fatalf("failed seeding products: %v", err)
+  // }
+  // log.Println("Re-seeded products successfully 🚀")
+
+  // ✅ PERBAIKAN: Hanya isi data seeder jika tabel masih kosong (Count == 0)
+  var count int64
+  configs.DB.Model(&models.Product{}).Count(&count)
+  if count == 0 {
+      if err := configs.DB.Create(&products).Error; err != nil {
+          log.Fatalf("failed seeding products: %v", err)
+      }
+      log.Println("Seeded products successfully 🚀")
+  } else {
+      log.Println("Products already exist, skipping seeding.")
+  }
+  ```
 
 ---
 

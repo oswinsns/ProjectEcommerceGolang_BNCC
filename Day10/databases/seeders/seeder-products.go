@@ -15,25 +15,22 @@ func SeedProducts() {
 		{Name: "Headset", Stock: 20, Price: 750000},
 	}
 
-	// 🔥 Fully clear table first
-	configs.DB.Exec("TRUNCATE TABLE products")
+	// ❌ SEBELUMNYA (BUG): TRUNCATE menghapus 100% isi tabel produk setiap kali server restart
+	// configs.DB.Exec("TRUNCATE TABLE products")
+	// if err := configs.DB.Create(&products).Error; err != nil {
+	// 	log.Fatalf("failed seeding products: %v", err)
+	// }
+	// log.Println("Re-seeded products successfully 🚀")
 
-	// Insert fresh seed data
-	if err := configs.DB.Create(&products).Error; err != nil {
-		log.Fatalf("failed seeding products: %v", err)
+	// ✅ PERBAIKAN: Hanya isi data seeder jika tabel produk masih kosong (Count == 0)
+	var count int64
+	configs.DB.Model(&models.Product{}).Count(&count)
+	if count == 0 {
+		if err := configs.DB.Create(&products).Error; err != nil {
+			log.Fatalf("failed seeding products: %v", err)
+		}
+		log.Println("Seeded products successfully 🚀")
+	} else {
+		log.Println("Products already exist, skipping seeding.")
 	}
-
-	log.Println("Re-seeded products successfully 🚀")
 }
-
-// Insert only if DB is empty
-// var count int64
-// configs.DB.Model(&models.Product{}).Count(&count)
-// if count == 0 {
-// 	if err := configs.DB.Create(&products).Error; err != nil {
-// 		log.Fatalf("failed seeding products: %v", err)
-// 	}
-// 	log.Println("Seeded products successfully 🚀")
-// } else {
-// 	log.Println("Products already exist, skipping seeding.")
-// }
